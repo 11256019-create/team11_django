@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}新增課程{% endblock %}
+
+{% block content %}
+	<div class="row justify-content-center">
+		<div class="col-lg-7">
+			<div class="card card-accent shadow-sm accent-left">
+				<div class="card-body">
+					<h3 class="card-title mb-3">新增課程</h3>
+
+					<form method="post" enctype="multipart/form-data" novalidate>
+						{% csrf_token %}
+
+						{% if errors %}
+							<div class="alert alert-danger">{{ errors.0 }}</div>
+						{% endif %}
+
+						{# Simple manual fields (view expects POST keys: name, course_id, teacher) #}
+						<div class="mb-3">
+							<label class="form-label" for="id_name">課程名稱 <span class="text-danger">*</span></label>
+							<input id="id_name" name="name" class="form-control" type="text" value="{{ initial.name|default:'' }}" required>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label" for="id_course_id">課程代碼 <span class="text-danger">*</span></label>
+							<input id="id_course_id" name="course_id" class="form-control" type="text" value="{{ initial.course_id|default:'' }}" required>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label" for="id_teacher">任課老師 <span class="text-danger">*</span></label>
+							<input id="id_teacher" name="teacher" class="form-control" type="text" value="{{ initial.teacher|default:'' }}" required>
+						</div>
+
+						<div class="d-flex justify-content-between align-items-center mt-3">
+							<div>
+								<button type="submit" class="btn btn-success">儲存課程</button>
+								<a class="btn btn-outline-secondary ms-2" href="{% url 'course_list' %}">取消</a>
+							</div>
+							<small class="text-muted">標示 * 為必填欄位</small>
+						</div>
+					</form>
+				</div>
+			</div>
+			<p class="text-center text-muted small mt-3">提示：可建立 `base.html` 讓 navbar / Bootstrap 共用。</p>
+		</div>
+	</div>
+{% endblock %}
+
