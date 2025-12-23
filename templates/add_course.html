@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}新增課程{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="mb-3">新增課程</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {% if errors %}<div class="alert alert-danger">{{ errors.0 }}</div>{% endif %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">課程名稱</label>
+                        <input name="name" class="form-control" value="{{ initial.name|default:'' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">課程代碼</label>
+                        <input name="course_id" class="form-control" value="{{ initial.course_id|default:'' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">任課老師</label>
+                        <select name="teacher" class="form-select" required>
+                            <option value="" disabled selected>-- 請選擇老師 --</option>
+                            {% for t in teachers %}
+                            <option value="{{ t.id }}" {% if initial.teacher_id == t.id|stringformat:"i" %}selected{% endif %}>{{ t.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">儲存</button>
+                    <a href="{% url 'course_list' %}" class="btn btn-outline-secondary">取消</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

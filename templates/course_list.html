@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}所有課程{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>課程列表</h2>
+        <a href="{% url 'add_course' %}" class="btn btn-primary">➕ 新增課程</a>
+    </div>
+
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.name }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ course.course_id }}</h6>
+                    <p class="card-text">老師：{{ course.teacher.name }}</p>
+                    <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-primary btn-sm">查看名單與成績</a>
+                    <a href="{% url 'grade_course' course.id %}" class="btn btn-outline-warning btn-sm">打分數</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">目前沒有課程，請點擊右上角新增。</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
