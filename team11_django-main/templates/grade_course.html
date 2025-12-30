@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}輸入成績 - {{ course.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">輸入成績：{{ course.name }}</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>學生姓名</th>
+                            <th style="width: 150px;">期中考</th>
+                            <th style="width: 150px;">期末考</th>
+                            <th>目前總分</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in enrollments %}
+                        <tr>
+                            <td>{{ e.student.name }}</td>
+                            <td>
+                                <input type="number" step="0.1" name="midterm_{{ e.id }}" 
+                                       class="form-control" value="{{ e.midterm_score }}">
+                            </td>
+                            <td>
+                                <input type="number" step="0.1" name="final_{{ e.id }}" 
+                                       class="form-control" value="{{ e.final_score }}">
+                            </td>
+                            <td class="text-muted">{{ e.midterm_score|add:e.final_score }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center p-4">目前無學生選修此課程。</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary me-2">取消</a>
+                <button type="submit" class="btn btn-success">儲存成績</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

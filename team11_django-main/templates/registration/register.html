@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}註冊帳號{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title text-center">學生註冊</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success w-100">註冊</button>
+                </form>
+                <div class="mt-3 text-center">
+                    已有帳號？<a href="{% url 'login' %}">登入</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}系統登入{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">歡迎登入成績系統</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger">帳號或密碼錯誤，請重試。</div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label">帳號 (Username)</label>
+                        <input type="text" name="username" class="form-control" placeholder="請輸入帳號" required autofocus>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">密碼 (Password)</label>
+                        <input type="password" name="password" class="form-control" placeholder="請輸入密碼" required>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">登入</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="card-footer text-center bg-light">
+                <p class="mb-2 text-muted">還沒有帳號嗎？</p>
+                <a href="{% url 'register' %}" class="btn btn-outline-success w-100">
+                    📝 立即註冊學生帳號
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
