@@ -3,88 +3,154 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}MyScoreSystem{% endblock %}</title>
+    <title>{% block title %}成績管理系統{% endblock %}</title>
 
-    <!-- Bootstrap & font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        :root{
-            --bg-light: #ECEFCA;
-            --bg-2:     #ffffff;
-            --surface:  #94B4C1;
-            --btn-deep: #213448;
-            --btn-dark: #547792;
-            --text:     #213448;
-            --muted:    #547792;
+        :root {
+            --primary-color: #0d6efd; /* 專業藍 */
+            --bg-body: #f8f9fa;       /* 淺灰背景，比純白更護眼 */
+            --text-main: #343a40;
         }
 
-        html,body{ height:100%; }
-        body{
-            font-family: "Noto Sans TC", system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Helvetica Neue", sans-serif;
-            background: linear-gradient(180deg, var(--bg-light) 0%, var(--bg-2) 70%);
-            color: var(--text);
-            -webkit-font-smoothing:antialiased;
-            -moz-osx-font-smoothing:grayscale;
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .navbar{ background: rgba(255,255,255,0.92); border-bottom:1px solid rgba(33,52,72,0.06); }
-        .navbar-brand{ color:var(--text); font-weight:600; }
+        /* 導覽列優化 */
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 0.8rem 1rem;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            letter-spacing: 1px;
+        }
 
-        .card{ border-radius:12px; box-shadow: 0 8px 24px rgba(33,52,72,0.05); }
-        .card .card-body{ padding:1.5rem; }
+        /* 卡片通用樣式 */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        /* 讓內容區塊自動撐開，Footer 永遠在最下方 */
+        main {
+            flex: 1;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
 
-        .btn-primary{ background: var(--btn-deep); color:#fff; border: none; font-weight:600; }
-        .btn-primary:hover{ background: var(--btn-dark); }
-
-        .btn-outline-secondary{ color:var(--text); border-color: rgba(33,52,72,0.06); background:transparent; }
-
-        /* accent for left card border */
-        .accent-left{ border-left:6px solid var(--surface); }
-
-        table.table thead th{ background: rgba(148,180,193,0.12); color: var(--btn-deep); }
-        table.table tbody td{ color: var(--text); }
-
-        footer small{ color: var(--muted); }
-
-        /* small helpers */
-        .hint{ color: var(--muted); font-size:0.9rem; }
+        /* Footer 樣式 */
+        footer {
+            background-color: #ffffff;
+            border-top: 1px solid #e9ecef;
+            padding: 1.5rem 0;
+            margin-top: auto;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
     </style>
-
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light mb-4">
-        <div>
-            {% if user.is_authenticated %}
-                <span class="me-3 text-muted">你好, {{ user.username }} 
-                    {% if user.student %}
-                        <a href="{% url 'profile' %}" class="btn btn-outline-info btn-sm me-2">👤 個人資料</a>
-                    {% endif %}
-                    {% if user.teacher %}(教師){% endif %}
-                    {% if user.student %}(學生){% endif %}
-                </span>
-                <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'course_list' %}">課程列表</a>
-                
-                {% if user.is_staff or user.teacher %}
-                    <a class="btn btn-primary btn-sm me-2" href="{% url 'add_course' %}">新增課程</a>
-                    <a class="btn btn-outline-dark btn-sm me-2" href="/admin/">後台</a>
-                {% endif %}
 
-                <form action="{% url 'logout' %}" method="post" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-sm">登出</button>
-                </form>
-            {% else %}
-                <a class="btn btn-success btn-sm" href="{% url 'login' %}">登入</a>
-            {% endif %}
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="bi bi-mortarboard-fill me-2"></i>成績管理系統
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item me-3">
+                            <span class="text-secondary">
+                                你好
+                                {% if user.teacher %}
+                                    {{ user.teacher.name }}
+                                {% elif user.student %}
+                                    {{ user.student.name }}
+                                {% else %}
+                                    {{ user.username }}
+                                {% endif %}
+                                
+                                {% if user.teacher %}<span class="badge bg-primary rounded-pill ms-1">教師</span>{% endif %}
+                                {% if user.student %}<span class="badge bg-success rounded-pill ms-1">學生</span>{% endif %}
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'course_list' %}"><i class="bi bi-list-task me-1"></i>課程列表</a>
+                        </li>
+                        {% if user.student %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}"><i class="bi bi-person-circle me-1"></i>個人資料</a>
+                        </li>
+                        {% endif %}
+                        {% if user.is_staff or user.teacher %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add_course' %}"><i class="bi bi-plus-lg me-1"></i>新增課程</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item ms-2">
+                            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">登出</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="btn btn-primary btn-sm rounded-pill px-4" href="{% url 'login' %}">登入</a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a class="nav-link" href="{% url 'register' %}">註冊</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
 
     <main class="container">
+        {% if messages %}
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-8">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm border-0" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
         {% block content %}{% endblock %}
     </main>
+
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 成績管理系統 Team 11. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}

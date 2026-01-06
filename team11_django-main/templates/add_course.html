@@ -18,15 +18,32 @@
                         <label class="form-label">課程代碼</label>
                         <input name="course_id" class="form-control" value="{{ initial.course_id|default:'' }}" required>
                     </div>
+                    
                     <div class="mb-3">
                         <label class="form-label">任課老師</label>
-                        <select name="teacher" class="form-select" required>
-                            <option value="" disabled selected>-- 請選擇老師 --</option>
-                            {% for t in teachers %}
-                            <option value="{{ t.id }}" {% if initial.teacher_id == t.id|stringformat:"i" %}selected{% endif %}>{{ t.name }}</option>
-                            {% endfor %}
-                        </select>
+                        
+                        {# --- 核心修改: 根據身分顯示不同介面 --- #}
+                        {% if is_admin %}
+                            {# 管理員 -> 顯示下拉選單 #}
+                            <select name="teacher" class="form-select" required>
+                                <option value="" disabled selected>-- 請選擇老師 --</option>
+                                {% for t in teachers %}
+                                <option value="{{ t.id }}" {% if initial.teacher_id == t.id|stringformat:"i" %}selected{% endif %}>
+                                    {{ t.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text text-muted">請指定授課教師。</div>
+
+                        {% else %}
+                            {# 老師 -> 顯示自己的名字 (唯讀) #}
+                            <input type="text" class="form-control" value="{{ user.teacher.name }}" disabled>
+                            <div class="form-text text-muted">您目前以老師身分登入，課程將自動建立在您名下。</div>
+                        {% endif %}
+                        {# ------------------------------------- #}
+                        
                     </div>
+
                     <button type="submit" class="btn btn-primary">儲存</button>
                     <a href="{% url 'course_list' %}" class="btn btn-outline-secondary">取消</a>
                 </form>

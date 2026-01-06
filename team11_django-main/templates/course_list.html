@@ -2,32 +2,44 @@
 {% block title %}課程列表{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="row">
     
-    {# ========== [情境 A] 學生畫面：顯示「已選」與「可加選」 ========== #}
+    {# ========== [情境 A] 學生畫面 ========== #}
     {% if role == 'student' %}
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>我的課程</h2>
-            <span class="badge bg-secondary fs-6">本學期平均：{{ semester_avg|default:"0" }}</span>
+        <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
+            <h3 class="fw-bold text-dark border-start border-4 border-primary ps-3">我的修課儀表板</h3>
+            <div class="card bg-white px-4 py-2 d-inline-block shadow-sm">
+                <span class="text-muted small text-uppercase fw-bold">本學期平均</span>
+                <div class="fs-4 fw-bold text-primary">{{ semester_avg|default:"--" }} <span class="fs-6 text-muted">分</span></div>
+            </div>
         </div>
 
-        <div class="row mb-5">
+        <h5 class="mb-3 text-secondary"><i class="bi bi-check-circle-fill me-2"></i>已選修課程</h5>
+        <div class="row g-4 mb-5">
             {% for enrollment in enrollments %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm border-primary">
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-top border-4 border-success">
                     <div class="card-body">
-                        <h5 class="card-title text-primary">{{ enrollment.course.name }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ enrollment.course.course_id }}</h6>
-                        <p class="card-text">
-                            👨‍🏫 老師：{{ enrollment.course.teacher.name }}<br>
-                            📊 成績：{{ enrollment.average }}
-                        </p>
-                        <div class="d-flex gap-2">
-                            <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-outline-primary btn-sm flex-grow-1">
-                                查看/留言
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-light text-secondary border">{{ enrollment.course.course_id }}</span>
+                            <span class="badge bg-success bg-opacity-10 text-success">已選修</span>
+                        </div>
+                        <h4 class="card-title fw-bold">{{ enrollment.course.name }}</h4>
+                        <p class="card-text text-muted mb-3"><i class="bi bi-person-video3 me-1"></i> {{ enrollment.course.teacher.name }} 老師</p>
+                        
+                        <div class="bg-light p-2 rounded mb-3 text-center">
+                            <small class="text-muted d-block">當前成績</small>
+                            <span class="fs-5 fw-bold {% if enrollment.average >= 60 %}text-success{% else %}text-danger{% endif %}">
+                                {{ enrollment.average }}
+                            </span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-outline-primary btn-sm">
+                                進入課程
                             </a>
-                            <a href="{% url 'drop_course' enrollment.course.id %}" class="btn btn-danger btn-sm" onclick="return confirm('確定要退選嗎？成績將會消失喔！')">
-                                🗑️ 退選
+                            <a href="{% url 'drop_course' enrollment.course.id %}" class="btn btn-outline-danger btn-sm border-0" onclick="return confirm('確定要退選嗎？成績將會消失喔！')">
+                                <i class="bi bi-trash"></i> 退選
                             </a>
                         </div>
                     </div>
@@ -35,50 +47,63 @@
             </div>
             {% empty %}
             <div class="col-12">
-                <div class="alert alert-warning">目前沒有修課，請參考下方課程列表進行加選。</div>
+                <div class="alert alert-light border text-center p-5">
+                    <i class="bi bi-journal-x fs-1 text-muted mb-3 d-block"></i>
+                    <p class="mb-0">您目前沒有修習任何課程，請參考下方列表進行加選。</p>
+                </div>
             </div>
             {% endfor %}
         </div>
 
-        <h3 class="mb-3 border-bottom pb-2">其他可加選課程</h3>
-        
-        <div class="row">
+        <h5 class="mb-3 text-secondary"><i class="bi bi-plus-circle-dotted me-2"></i>其他可加選課程</h5>
+        <div class="row g-4">
             {% for course in available_courses %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm bg-light">
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 bg-light border-0">
                     <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small class="text-muted">{{ course.course_id }}</small>
+                        </div>
                         <h5 class="card-title">{{ course.name }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ course.course_id }}</h6>
-                        <p class="card-text">老師：{{ course.teacher.name }}</p>
-                        <a href="{% url 'enroll_course' course.id %}" class="btn btn-success btn-sm w-100">
-                            ➕ 我要加選
+                        <p class="text-muted small mb-3">{{ course.teacher.name }} 老師</p>
+                        <a href="{% url 'enroll_course' course.id %}" class="btn btn-white border shadow-sm w-100 text-primary fw-bold hover-shadow">
+                            <i class="bi bi-plus-lg"></i> 加選此課
                         </a>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-12 text-muted">目前沒有其他課程可供加選。</div>
+            <div class="col-12 text-muted text-center py-4">目前沒有其他課程可供加選。</div>
             {% endfor %}
         </div>
 
-    {# ========== [情境 B] 老師/管理員畫面：顯示所有課程與管理功能 ========== #}
+    {# ========== [情境 B] 老師/管理員畫面 ========== #}
     {% else %}
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>所有課程列表</h2>
+        <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
+            <h3 class="fw-bold border-start border-4 border-warning ps-3">所有課程管理</h3>
             {% if role == 'teacher' or role == 'admin' %}
-                <a href="{% url 'add_course' %}" class="btn btn-primary">➕ 新增課程</a>
+                <a href="{% url 'add_course' %}" class="btn btn-primary shadow-sm">
+                    <i class="bi bi-plus-lg"></i> 新增課程
+                </a>
             {% endif %}
         </div>
 
-        <div class="row">
+        <div class="row g-4">
             {% for course in courses %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ course.name }}</h5>
-                        <p class="card-text">老師：{{ course.teacher.name }}</p>
-                        <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-primary btn-sm">查看詳情</a>
-                        <a href="{% url 'grade_course' course.id %}" class="btn btn-warning btn-sm">✏️ 打分數</a>
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-top border-4 border-primary">
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-auto">
+                            <div class="badge bg-light text-dark border mb-2">{{ course.course_id }}</div>
+                            <h4 class="card-title fw-bold">{{ course.name }}</h4>
+                            <p class="text-muted"><i class="bi bi-person-badge me-1"></i> {{ course.teacher.name }}</p>
+                        </div>
+                        <div class="mt-3 pt-3 border-top d-flex gap-2">
+                            <a href="{% url 'course_detail' course.id %}" class="btn btn-light flex-grow-1">查看</a>
+                            <a href="{% url 'grade_course' course.id %}" class="btn btn-warning flex-grow-1">
+                                <i class="bi bi-pencil-square"></i> 打分數
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

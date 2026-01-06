@@ -83,7 +83,15 @@
                                     {% if comment.user.student.avatar %}
                                         <img src="{{ comment.user.student.avatar.url }}" width="24" height="24" class="rounded-circle me-1">
                                     {% endif %}
-                                    
+
+                                    {% if comment.user.teacher %}
+                                        {{ comment.user.teacher.name }}
+                                    {% elif comment.user.student %}
+                                        {{ comment.user.student.name }}
+                                    {% else %}
+                                        {{ comment.user.username }}
+                                    {% endif %}
+
                                     {{ comment.user.student.name|default:comment.user.username }}
                                     
                                     <small class="text-muted fw-normal">
@@ -101,7 +109,7 @@
                         </div>
                         {% empty %}
                         <div class="text-center text-muted py-3">
-                            目前還沒有留言，快來搶頭香！
+                            目前還沒有留言
                         </div>
                         {% endfor %}
                     </div>
